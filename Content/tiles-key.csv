@@ -1,0 +1,7 @@
+name,x,y,width,height
+deep-forest,0,0,96,96
+forest,96,0,96,96
+mountains,192,0,96,96
+plains,0,96,96,96
+scrubland,96,96,96,96
+stony-field,192,96,96,96

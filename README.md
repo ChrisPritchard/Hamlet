@@ -1,0 +1,3 @@
+# Hamlet
+
+Isometric rendering test
