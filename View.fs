@@ -18,6 +18,16 @@ let rectFrom x y =
     let x, y = x + offsetX, y + offsetY
     (x - tileWidth / 2, y - tileHeight, tileWidth, tileHeight)
 
+let mapKeyFrom =
+    function
+    | Forest -> "forest"
+    | DeepForest -> "deep-forest"
+    | Mountains -> "mountains"
+    | Plains -> "plains"
+    | ScrubLand -> "scrubland"
+    | StonyField -> "stony-field"
+    | Wetlands -> "wetland"
+
 let assetsToLoad = [
     Font ("default", "Content/coders_crux")
     TextureMap ("tiles", "./Content/tiles.png", "./Content/tiles-key.csv")
@@ -29,6 +39,6 @@ let getView _ =
         world.tiles 
             |> List.sortBy(fun (x, y, _) -> y, -x)
             |> List.map (fun (x, y, terrain) ->
-            let texture = "forest"
+            let texture = mapKeyFrom terrain
             let tx, ty = xFrom x y, yFrom x y
             MappedImage ("tiles", texture, rectFrom tx ty, Color.White))
