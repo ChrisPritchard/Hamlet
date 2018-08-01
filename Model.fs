@@ -16,8 +16,9 @@ let randomTerrain () =
     | 4 | 5 -> Wetlands
     | 6 | 7 | 8 -> Forest
     | _ -> DeepForest
-   
+
+let worldDim = 20
 let startWorld = {
-    tiles = [0..9] |> List.collect (fun x -> 
-        [0..9] |> List.map (fun y -> (x, y, randomTerrain ())))
+    tiles = [0..worldDim-1] |> List.collect (fun x -> 
+        [0..worldDim-1] |> List.map (fun y -> (x, y, randomTerrain ())))
 }
