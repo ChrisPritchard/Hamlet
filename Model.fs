@@ -9,12 +9,12 @@ type World = {
 let random = new System.Random()
 
 let randomTerrain () =
-    match random.Next(10) with
+    match random.Next(13) with
     | 0 -> Mountains
     | 1 -> StonyField
-    | 2 | 3 -> Plains
-    | 4 | 5 -> Wetlands
-    | 6 | 7 | 8 -> Forest
+    | 2 -> Plains
+    | 3 -> Wetlands
+    | 4 | 5 | 6 | 7 | 8 -> Forest
     | _ -> DeepForest
 
 let worldDim = 20
