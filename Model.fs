@@ -8,14 +8,19 @@ type World = {
 
 let random = new System.Random()
 
-let randomTerrain () =
+let randomTerrainSet () =
     match random.Next(13) with
-    | 0 -> Mountains
-    | 1 -> StonyField
-    | 2 -> Plains
-    | 3 -> Wetlands
-    | 4 | 5 | 6 | 7 | 8 -> Forest
-    | _ -> DeepForest
+    | 0 -> Mountains, StonyField
+    | 1 -> StonyField, Plains
+    | 2 -> Plains, Forest
+    | 3 -> Wetlands, Forest
+    | 4 | 5 | 6 | 7 | 8 -> Forest, DeepForest
+    | _ -> DeepForest, Forest
+
+let randomTerrain (main, off) =
+    match random.Next(5) with
+    | 0 -> off
+    | _ -> main
 
 let worldDim = 20
 
@@ -55,6 +60,6 @@ let startWorld = {
     tiles = 
         biomes |>
         List.collect (fun list -> 
-            let terrain = randomTerrain ()
-            List.map (fun (x, y) -> (x, y, terrain)) list)
+            let terrainSet = randomTerrainSet ()
+            List.map (fun (x, y) -> (x, y, randomTerrain terrainSet)) list)
 }
