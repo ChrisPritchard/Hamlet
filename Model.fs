@@ -34,15 +34,15 @@ let rec bspDivide minSize list =
     let minRange = minSize * 2
     let minx, miny, maxx, maxy = range list
     let cantx, canty = maxx - minx < minRange, maxy - miny < minRange
-    let xdivide () =
-        let mid = random.Next(minx + minSize, maxx - minSize)
-        fun (x,_) -> x > mid
-    let ydivide () =
-        let mid = random.Next(miny + minSize, maxy - minSize)
-        fun (_,y) -> y > mid
     if cantx && canty then 
         [list]
     else
+        let xdivide () =
+            let mid = random.Next(minx + minSize, maxx - minSize)
+            fun (x,_) -> x > mid
+        let ydivide () =
+            let mid = random.Next(miny + minSize, maxy - minSize)
+            fun (_,y) -> y > mid
         let divider = 
             if cantx then ydivide ()
             else if canty then xdivide ()
