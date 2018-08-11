@@ -49,10 +49,16 @@ let biomeTypes length =
     let result = 
         terrainRates 
         |> List.collect (fun (ratio, main, off) ->
-            let count = ratio * total |> int
+            let count = ratio * total |> int |> max 1
             List.replicate count (main, off))
     let padded = List.replicate (length - List.length result) (DeepForest, Forest)
     result @ padded |> List.mapi (fun i o -> i, o)
+
+let randomItem list =
+    let length = List.length list
+    let (i, item) = list.[random.Next(length)]
+    let newList = List.except [(i, item)] list
+    (item, newList)
 
 let getTiles worldDim =
     let startTiles = 
@@ -63,9 +69,7 @@ let getTiles worldDim =
     let biomes = biomeTypes <| List.length startTiles
     tiles |>
         List.fold (fun (biomes, result) localTiles -> 
-            let biomesLength = List.length biomes
-            let (i, terrainSet) = biomes.[random.Next(biomesLength)]
-            let newBiomes = List.except [(i, terrainSet)] biomes
+            let (terrainSet, newBiomes) = randomItem biomes
             let newTiles = localTiles |> List.map (fun (x, y) -> x, y, randomTerrain terrainSet)
             newBiomes, result @ newTiles) 
             (biomes, [])
