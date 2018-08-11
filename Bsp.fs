@@ -4,19 +4,14 @@ open Model
 
 let random = new System.Random()
 
-let randomTerrainSet () =
-    match random.Next(13) with
-    | 0 -> Mountains, StonyField
-    | 1 -> StonyField, Plains
-    | 2 -> Plains, Forest
-    | 3 -> Wetlands, Forest
-    | 4 | 5 | 6 | 7 | 8 -> Forest, DeepForest
-    | _ -> DeepForest, Forest
-
-let randomTerrain (main, off) =
-    match random.Next(5) with
-    | 0 -> off
-    | _ -> main
+let terrainRates = [
+    (0.1, Mountains, StonyField)
+    (0.1, StonyField, Plains)
+    (0.1, Plains, Forest)
+    (0.1, Wetlands, Forest)
+    (0.3, Forest, DeepForest)
+    (0.3, DeepForest, Forest)
+]
 
 let range = 
     let maxInt = System.Int32.MaxValue
@@ -44,15 +39,34 @@ let rec bspDivide minSize list =
         let left, right = List.partition divider list
         List.concat [bspDivide minSize left; bspDivide minSize right]
 
+let randomTerrain (main, off) =
+    match random.Next(5) with
+    | 0 -> off
+    | _ -> main
 
+let biomeTypes length = 
+    let total = length |> float
+    let result = 
+        terrainRates 
+        |> List.collect (fun (ratio, main, off) ->
+            let count = ratio * total |> int
+            List.replicate count (main, off))
+    let padded = List.replicate (length - List.length result) (DeepForest, Forest)
+    result @ padded |> List.mapi (fun i o -> i, o)
 
 let getTiles worldDim =
     let startTiles = 
         [0..worldDim-1] |> List.collect (fun x -> 
         [0..worldDim-1] |> List.map (fun y -> (x, y)))
+    let tiles = bspDivide 3 startTiles
 
-    let biomes = bspDivide 3 startTiles
-    biomes |>
-        List.collect (fun list -> 
-            let terrainSet = randomTerrainSet ()
-            List.map (fun (x, y) -> (x, y, randomTerrain terrainSet)) list)
+    let biomes = biomeTypes <| List.length startTiles
+    tiles |>
+        List.fold (fun (biomes, result) localTiles -> 
+            let biomesLength = List.length biomes
+            let (i, terrainSet) = biomes.[random.Next(biomesLength)]
+            let newBiomes = List.except [(i, terrainSet)] biomes
+            let newTiles = localTiles |> List.map (fun (x, y) -> x, y, randomTerrain terrainSet)
+            newBiomes, result @ newTiles) 
+            (biomes, [])
+        |> snd
