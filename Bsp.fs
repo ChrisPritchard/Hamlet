@@ -19,6 +19,9 @@ let range =
         (min mix x, min miy y, max mox x, max moy y)) 
         (maxInt, maxInt, 0, 0)
 
+let mid (mix, miy, mox, moy) =
+    (mox - mix / 2, moy - miy / 2)
+
 let rec bspDivide minSize list = 
     let minRange = minSize * 2
     let minx, miny, maxx, maxy = range list
@@ -38,6 +41,9 @@ let rec bspDivide minSize list =
             else match random.Next(2) with 0 -> xdivide () | _ -> ydivide ()
         let left, right = List.partition divider list
         List.concat [bspDivide minSize left; bspDivide minSize right]
+
+let bspPoints minSize list =
+    bspDivide minSize list |> List.map (fun section -> section |> range |> mid)
 
 let randomTerrain (main, off) =
     match random.Next(5) with
@@ -59,6 +65,20 @@ let randomItem list =
     let (i, item) = list.[random.Next(length)]
     let newList = List.except [(i, item)] list
     (item, newList)
+
+
+let biomePoints points =
+    let length = List.length points
+    let biomes = biomeTypes length
+    points 
+        |> List.fold (fun (biomesLeft, result) (x, y) ->
+            let (terrainSet, newBiomes) = randomItem biomesLeft
+            newBiomes, (x, y, terrainSet)::result) (biomes, [])
+        |> snd
+
+let tilesByBiome biomes tiles =
+    tiles |> List.map (fun (x, y) ->
+        )
 
 let getTiles worldDim =
     let startTiles = 
