@@ -3,7 +3,8 @@ module Bsp
 open Model
 
 let random = new System.Random()
-let minSize = 6
+let minSize = 4
+let radius = float minSize * 2.
 
 let terrainRates = [
     (0.1, Mountains, StonyField)
@@ -84,20 +85,20 @@ let distance (x1, y1) (x2, y2) =
         float x1, float x2, float y1, float y2
     (x2 - x1)**2.0 + (y2 - y1)**2.0 |> sqrt
 
-let tilesByBiome biomes =
-    List.map (fun (x, y) ->
-        let closest = 
+let tilesByBiome biomes tiles =
+    tiles |> List.map (fun (x, y) ->
+        let options = 
             biomes 
-            |> List.map (fun (ox,oy,terrain) -> distance (x,y) (ox,oy), terrain)
+            |> List.map (fun (ox, oy, terrain) -> distance (x,y) (ox,oy), terrain)
             |> List.sortBy (fun (dist, _) -> dist)
-            |> List.take 3
-        let farthest = List.last closest |> fst
-        let terrainSet = 
-            match random.NextDouble() * farthest with
-            // | n when n > fst closest.[1] -> snd closest.[2]
-            // | n when n > fst closest.[0] -> snd closest.[1]
-            | _ -> snd closest.[0]
-        x, y, fst terrainSet)
+            |> List.filter (fun (dist, _) -> dist <= radius)
+            |> List.map (fun (dist, terrain) -> (radius - dist) / radius, terrain)
+        let terrainOpt = options |> List.fold (fun res (opt, ter) -> 
+            match res with 
+            | Some _ -> res 
+            | None -> if random.NextDouble() < opt then Some ter else None) None
+        let terrainSet = match terrainOpt with | None -> snd options.[0] | Some o -> o
+        x, y, randomTerrain terrainSet)
 
 let getTiles worldDim =
     let startTiles = 

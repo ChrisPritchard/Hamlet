@@ -44,6 +44,6 @@ let getView _ =
             let tx, ty = xFrom x y, yFrom x y
             MappedImage ("tiles", texture, rectFrom tx ty, Color.White))
         let text = [
-            Text ("default", "R: Regenerate", (20,20), TopLeft, 0.8, Color.White)
+            Text ("default", "R: Regenerate", (20,20), TopLeft, 0.6, Color.White)
         ]
         mapTiles @ text
