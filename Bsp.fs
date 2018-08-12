@@ -9,8 +9,8 @@ let radius = float minSize * 2.
 let terrainRates = [
     (0.1, Mountains, StonyField)
     (0.1, StonyField, Plains)
-    (0.2, Plains, Forest)
-    (0.1, Wetlands, Forest)
+    (0.2, Plains, StonyField)
+    (0.1, Wetlands, Wetlands)
     (0.3, Forest, DeepForest)
     (0.2, DeepForest, Forest)
 ]
