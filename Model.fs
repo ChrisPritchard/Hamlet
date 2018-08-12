@@ -6,4 +6,4 @@ type World = {
     | DeepForest | Forest | ScrubLand | Plains 
     | StonyField | Wetlands | Mountains
 
-let worldDim = 20
+let worldDim = 30

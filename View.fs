@@ -4,10 +4,10 @@ open GameCore
 open Model
 open Microsoft.Xna.Framework
 
-let screenWidth, screenHeight = 1000, 600
+let screenWidth, screenHeight = 1150, 600
 let resolution = Windowed (screenWidth, screenHeight)
 
-let tileWidth, tileHeight = 48, 48
+let tileWidth, tileHeight = 36, 36
 let halfWidth, halfHeight = tileWidth / 2, tileHeight / 4 // cells are double height for faux-3D
 let offsetX, offsetY = 60, screenHeight / 2
 

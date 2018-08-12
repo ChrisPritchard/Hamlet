@@ -7,10 +7,10 @@ let random = new System.Random()
 let terrainRates = [
     (0.1, Mountains, StonyField)
     (0.1, StonyField, Plains)
-    (0.1, Plains, Forest)
+    (0.2, Plains, Forest)
     (0.1, Wetlands, Forest)
     (0.3, Forest, DeepForest)
-    (0.3, DeepForest, Forest)
+    (0.2, DeepForest, Forest)
 ]
 
 let range = 
@@ -78,7 +78,7 @@ let biomePoints points =
 let distance (x1, y1) (x2, y2) = 
     let x1, x2, y1, y2 = 
         float x1, float x2, float y1, float y2
-    (x2 - x1)**2.0 - (y2 - y1)**2.0 |> sqrt
+    (x2 - x1)**2.0 + (y2 - y1)**2.0 |> sqrt
 
 let tilesByBiome biomes tiles =
     tiles |> List.map (fun (x, y) ->
