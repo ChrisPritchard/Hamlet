@@ -36,9 +36,14 @@ let assetsToLoad = [
 let getView _ =
     function
     | world -> 
-        world.tiles 
+        let mapTiles = 
+            world.tiles 
             |> List.sortBy(fun (x, y, _) -> y, -x)
             |> List.map (fun (x, y, terrain) ->
             let texture = mapKeyFrom terrain
             let tx, ty = xFrom x y, yFrom x y
             MappedImage ("tiles", texture, rectFrom tx ty, Color.White))
+        let text = [
+            Text ("default", "R: Regenerate", (20,20), TopLeft, 0.8, Color.White)
+        ]
+        mapTiles @ text
