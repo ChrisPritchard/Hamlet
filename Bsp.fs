@@ -3,6 +3,7 @@ module Bsp
 open Model
 
 let random = new System.Random()
+let minSize = 6
 
 let terrainRates = [
     (0.1, Mountains, StonyField)
@@ -20,7 +21,10 @@ let range =
         (maxInt, maxInt, 0, 0)
 
 let mid (mix, miy, mox, moy) =
-    (mox - mix / 2, moy - miy / 2)
+    let mix, miy, mox, moy =
+        float mix, float miy,
+        float mox, float moy
+    ((mox - mix) / 2.) + mix, ((moy - miy) / 2.) + miy
 
 let rec bspDivide minSize list = 
     let minRange = minSize * 2
@@ -80,25 +84,24 @@ let distance (x1, y1) (x2, y2) =
         float x1, float x2, float y1, float y2
     (x2 - x1)**2.0 + (y2 - y1)**2.0 |> sqrt
 
-let tilesByBiome biomes tiles =
-    tiles |> List.map (fun (x, y) ->
-            let closest = 
-                biomes 
-                |> List.map (fun (ox,oy,terrain) -> distance (x,y) (ox,oy), terrain)
-                |> List.sortBy (fun (dist, _) -> dist)
-                |> List.take 3
-            let farthest = List.last closest |> fst
-            let terrainSet = 
-                match random.NextDouble() * farthest with
-                | n when n > fst closest.[1] -> snd closest.[2]
-                | n when n > fst closest.[0] -> snd closest.[1]
-                | _ -> snd closest.[0]
-            x, y, randomTerrain terrainSet
-        )
+let tilesByBiome biomes =
+    List.map (fun (x, y) ->
+        let closest = 
+            biomes 
+            |> List.map (fun (ox,oy,terrain) -> distance (x,y) (ox,oy), terrain)
+            |> List.sortBy (fun (dist, _) -> dist)
+            |> List.take 3
+        let farthest = List.last closest |> fst
+        let terrainSet = 
+            match random.NextDouble() * farthest with
+            // | n when n > fst closest.[1] -> snd closest.[2]
+            // | n when n > fst closest.[0] -> snd closest.[1]
+            | _ -> snd closest.[0]
+        x, y, fst terrainSet)
 
 let getTiles worldDim =
     let startTiles = 
         [0..worldDim-1] |> List.collect (fun x -> 
         [0..worldDim-1] |> List.map (fun y -> (x, y)))
-    let biomes = biomePoints <| bspPoints 3 startTiles
+    let biomes = biomePoints <| bspPoints minSize startTiles
     tilesByBiome biomes startTiles
